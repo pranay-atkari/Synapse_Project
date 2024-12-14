@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Forecast Dashboard</title>
+   
+</head>
+<body>
+    <h1>Forecast Dashboard</h1>
+    <div>
+        <label for="country">Select Country:</label>
+        <select id="country" onchange="fetchData()">
+            <option value="USA">USA</option>
+            <option value="UK">UK</option>
+            <option value="Germany">Germany</option>
+            <option value="Japan">Japan</option>
+        </select>
+    </div>
+    <canvas id="forecastChart"></canvas>
+
+    <script>
+        async function fetchData() {
+            const country = document.getElementById('country').value;
+            const response = await fetch(`/api/forecast/${country}`);
+            const data = await response.json();
+
+            const labels = Object.keys(data[0].monthlyForecast);
+            const values = Object.values(data[0].monthlyForecast);
+
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Forecast for ${country}`,
+                        data: values,
+                        borderColor: 'blue',
+                        fill: false
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
